@@ -1,0 +1,737 @@
+//////////////JLAB STUFF//////
+ifarm::::::Isolid@4
+ssh -X hallgw
+:::::: 984141mobileNet
+CLASS login
+ssh -X clasrun@clondaq6
+:::::::::e1tocome
+Then CD
+cd $CODA/src/rol/main
+
+
+### LOGIN INTO DUKE
+ssh -X bk189@login1.phy.duke.edu
+Bkba...
+
+
+############ LOGIN TO TUNL11
+ssh -X tunl11 (pss=> same as ifarm)
+
+=> switch to solid (su solid => ilovesolid
+=> Then cd $RICH_SUITE/
+
+1)  /////////   Linking the file//////////
+ln -s (where is file filename ) what you want to link
+e.g First make a raw directory inside replay directory then
+ln -s /adaq1/data1/gmp_12705.dat.0 dvcs14_12705.dat.0
+
+
+2)        GETTING A FILE FROM MASS TAPE
+
+jcache get /mss/halla/dvcs/raw/dvcs14_run#.dat.*
+
+
+3)       FIND THE RAW FILES
+cd /adaq1/data1
+
+4)       CHAFS DIRECTORY
+
+cd /chafs/work1/dvcs
+
+
+5)     REPLAY GMP
+go to onlana :
+type goonalana
+then: .x replay_R.C (run#)
+
+5)   CLONE HISTOGRAM
+ TH1F *h1 = (TH1F*) h2->Clone();
+ 
+================================
+6)  TO FIND THE SIZE OF FILE
+du -sk filename
+du -sh * (gives size of each directory)
+
+df filename/ (gives the available space in disk)
+================================
+
+7) FOR GOLDEN RUN
+BE SURE NO ANY REPLAYS
+a) godvcs
+b)cd Rootfiles
+c)create symbolic link (ln -s target of link rootfile  name of link golden)
+d) goback to onl and do ls
+e) open i)calo.cfg     ii) detectorL.cfg   iii) physics.cfg
+f) change the line with golden root file by target run#
+
+
+8)  PROJECTION OF HISTOGRAM
+a) TH1F *h1 = new TH1F ("h1","projection",100,0.5)
+h1=(TH1F*) name of 2D hist->ProjectionX.();
+h1->Draw();
+
+9)   TO REMOVE STATISTICS BAR
+h1->SetStats(0)
+
+10) Fit
+>> Fit("gaus","","",min,max);
+ a) Fit("function","R0Q");fits without drawing the fitting
+ b) Fit("function","R+");fits with drawing the fitting
+ c) "Q" is for not having fitting parameters in terminal
+d) Double_t mean_BMinus=g1->GetFunction("gaus")->GetParameter(1);
+
+11) LEGEND============================================
+
+TLegend *legend=new TLegend(0.6,0.65,0.88,0.85);// from(x1,y1) to (x2,y2)
+legend->SetTextFont(72);
+legend->SetTextSize(0.04);
+legend->AddEntry(hscale,"Scaled","l");
+legend->AddEntry(hnocorr,"without scaling","l");
+// legend->AddEntry(signalFcn,"Signal fit","l");                              
+// legend->AddEntry(fitFcn,"Global Fit","l");                                 
+legend->Draw();
+
+===================================================
+
+12) shadding the REGION IN GRAPH
+============================================
+TGraph *cutg= new TGraph(4);
+   cutg->SetPoint(0,-147,1.1);
+   cutg->SetPoint(1,165,1.1);
+   cutg->SetPoint(2,165,0.90);
+   cutg->SettPoint(3,-147,0.90);
+   cutg->SetFillStyle(3002);
+   cutg->SetFillColor(15);
+   cutg->Draw("fsame");4
+ == =============================================
+
+13) GSTYLE===================================
+gStyle->SetOptStat(0);
+gStyle->SetOptFit(1);
+gStyleSetTextSize0.08);                                                    gStyle->SetPaintTextFormat("5.4g");
+gStyle->SetTitleFontSize(0.06);
+gStyle->SetNdivisions(510);//505 // number of division in X axis 10 or 5
+gStyle->SetPadTopMargin(0.11);
+gStyle->SetPadLeftMargin(0.14);
+gStyle->SetPadRightMargin(0.08);
+gStyle->SetPadBottomMargin(.14);
+gStyle->SetTitleYOffset(0.48); // higher the value goes away from axis
+gStyle->SetTitleXOffset(0.98);
+gStyle->SetTitleYSize(0.063);
+gStyle->SetTitleXSize(0.063);
+gStyle->SetLabelFont(62,"X");
+gStyle->SetLabelFont(62,"Y");
+gStyle->SetTitleFont(62,"X");
+gStyle->SetTitleFont(62,"Y");
+gStyle->SetLabelSize(0.044,"X");
+gStyle->SetLabelSize(0.044,"Y");
+gStyle->SetPaperSize(18,22);
+gStyle->SetPalette(1);
+//////////////SET N DIVISIONS
+ hgrid->GetXaxis()->SetNdivisions(-404); // First 4 denotes number of ticks in between first and second mark (for instance mark between 0-100 if marking is 0 , 100, 200 ..400 so on
+ hgrid->GetYaxis()->SetNdivisions(-406); // 06 second digit denotes how many major ticks between min and max. For instance here if 0- 2400  one get 6 ticks (0 400 800 ... 2400)
+
+
+ mgtotxsec[ip]->GetXaxis()->SetNdivisions(18,2,0,kTRUE);// MAIN SUBMAIN
+
+TStyle root cern -== mkdir "~/.rootrc" Add line Rint.Logon: ~/rootlogon.C on ~/.rootrc
+=======================================================
+14) INTEGRAL
+Int_t maxbin,minbin;
+minbin= h3->FindBin(-0.02);
+maxbin=h3->FindBin(0.005);
+cout<<h3->Integral(minbin,maxbin)<<endl;
+
+=====================================================
+15)LINE BREAK IN LATEX
+\hfill \break
+=====================================================
+16)Fitting 
+//(sizeof(x) / sizeof(Double_t)
+
+Double_t SEMF(Int_t x,Int_t y, Double_t *par)
+{
+  Double_t mod=1.0;
+  if(x%2==0 && y%2==0){
+    mod=1.0;}
+  if else (x%2==!0 && y%2==!0){
+      mod =-1.0;}
+  else mod =0.0;
+  Double_t value =(par[0])-(par[1]*pow(x,-0.333))-(par[2]*y*(y-1)*pow(x,-1.3333))-(par[3]*pow((x/2.0-y),2)*x**2) + par[4]*mod*pow(x,-1.5);
+  return value;			     
+}
+=====================================================
+17)SET LOG Y
+gPad->SetLogy()
+=====================================================
+18)SPLIT LINE IN TITLE ROOT
+TH1D *h1 = new TH1D("h1",
+   "#splitline{Difference between Original}{#splitline{function and Function}{with noise}}",
+   100, -hr, hr);
+=====================================================
+19)READ PARTICULAR COLUMN FROM DATA FILE
+RUN BELOW COMMAND ON TERMINAL WHERE YOU HAVE DATA FILE (BE_7501.dat)
+
+awk 'NR=2,NR=10000{print $3, $7}' BE_7501.dat > BE_A.dat
+
+
+=====================================================
+20) g++ -o main main.cxx calc.cxx `root-config --cflags --glibs`
+
+
+=====================================================
+Run Perl script
+=====================================================
+21) perl submit.pl 
+=====================================================
+22) How to have .sty files in latex
+a) Find and download the files you are missing (CTAN: search.sty in google)
+b) run: latex search.ins file (you will get .sty file)
+c) sudo cp .sty to /usr/share/texlive/texmf-dist/tex/latex
+d) run: sudo texhash
+e) you may delete downloaded file
+
+=================================================================
+22) 9) HOw to remove #file#
+rm \#example.C#
+
+==================================================
+23) Configure SHELL and ALIAS
+a) First echo $SHELL (find which shell you are using)
+b) gedit ~/.tchrc or bash or chrc   (you may have tchrc but inside tchrc source chrc like yours)
+c) Open and write alias bk 'ssh -X karki@login1'
+d) then run comman source  ~/.tchrc (Bemindful tchrc can be chrc as well
+=================================================
+24) LOGIN FILE SOURCE
+A) Open .login
+b) put a command source path/file.sh
+c) then you can expect analyzer or DB whatever you have path for file.sh
+=================================================
+24) ROOT INSTALLATION 5 - version
+A) Download source file file.xz
+b) untar (tar -xvf file.xz)
+c) ./configure
+d) make
+e) make install
+f) ldconfig
+g) root
+
+
+///////////////////////////////////////COSY//////////////////////////////////////////
+/w/halla-scifs17exp/gmp12/disk1/gautam/SIMC/cosyM/DVCS_cosy
+
+1) emacs -nw /w/halla-scifs17exp/gmp12/disk1/gautam/SIMC/cosyM/DVCS_cosy/infile/hrs-sos-barak.fox
+
+2) SEARCH for { QUAD STRENGTHS }
+
+   Q1 := -0.243838*1.02;
+   Q2 :=  0.1934 ;
+   Q3 :=  0.17892 ;
+   DD3 := 0. ; {Changed from 0.00245}
+
+Here,  Q1 := -0.243838 is the nominal field and the factor 1.02 is the
+saturation factor.
+
+3) cd /w/halla-scifs17exp/dvcs/disk1/bishnu/cosyM/DVCS_cosy
+
+4) mv HRSSOS_fr3_for_maps.dat old_for.dat
+
+5) mv HRSSOS_fr3_rec.dat old_recon.dat
+
+6) ./cosy
+
+7)  ADD infiles/hrs-sos-barak then HIT ENTER
+
+8) ADD 5 then HIT ENTER
+
+9) Then 1 (SOS Q1 for Fall and 0  or Q1 For Spring
+
+10) new detector yes
+
+11) 3 for fringe
+
+To run cosy first you may want to tune or de-tuned Q1. For this you need
+to modify input file infile/hrs-sos-barak.fox. Search for QUAD STRENGTH in
+this files:
+{ QUAD STRENGTHS }
+
+   Q1 := -0.243838*1.02;
+   Q2 :=  0.1934 ;
+   Q3 :=  0.17892 ;
+   DD3 := 0. ; {Changed from 0.00245}
+
+
+Here,  Q1 := -0.243838 is the nominal field and the factor 1.02 is the
+saturation factor.
+
+
+After you saved it come back to the cosy directory. First of all move old
+recon and forward matrices in that directory. i.e.
+
+HRS_fr3_for_maps.dat to old_for.dat
+HRS_fr3_rec.dat to old_recon.dat
+
+Then execute cosy by doing
+./cosy
+ then it will ask for the input file without extension .fox i.e
+infiles/hrs-sos-barak     then press enter
+Then it will ask for order map which you need to put 5 and just press enter.
+then it will ask for "$Use the SOS quad instead of Q1 (0=no, 1=yes)". For
+you it should be Q1 (ie 0) for spring run. so just type 0 and press enter.
+And then it will as for $Use the new detector hut in SIMC (0=no, 1=yes).
+You just type 1 for this option and press enter.
+Finally it will ask for Fringe field mode. You type 3 and press enter.
+Then the program will run and will produce forward and recon database for
+the change you made in infiles.
+
+
+Just as an example for the steps needed to run cosy:
+---------------------------------------------------
+
+
+
+
+GIVE SOURCE FILE NAME WITHOUT EXTENSION .FOX
+ infiles/hrs-sos-barak
+infiles/hrs-sos-barak
+ --- BEGINNING COMPILATION
+ --- BIN FILE READ: COSY
+ --- BEGINNING EXECUTION
+$Order for maps (1-5):
+5
+$Use the SOS quad instead of Q1 (0=no, 1=yes)
+0
+$Use the new detector hut in SIMC (0=no, 1=yes)
+1
+$Fringe-field mode (0-3):
+3
+Q1: Using Standard HRS Q1
+ Aperture at S =   1.590300000000000
+Q1: Using a standard quad (MQ)
+ Aperture at S =   2.217833333333333
+ Aperture at S =   2.531600000000000
+ Aperture at S =   3.703600000000000
+Q2: Using a standard quad (MQ)
+ Aperture at S =   4.921333333333333
+ Aperture at S =   5.530199999999999
+ Aperture at S =   9.960999999999999
+ --- WARNING, MINIMUM STEPSIZE REACHED IN RK
+ Aperture at S =   16.55834457253857
+ Aperture at S =   18.15084457253857
+Q3: Using a standard quad (MQ)
+ Aperture at S =   19.36871123920523
+ Aperture at S =   19.97764457253857
+ Aperture at S =   23.49424457253857
+ Q1,Q2, 1st order OBJ =
+  -.2438380      0.1934000       1.002722
+ Total length =   23.49424457253857 meters
+ Focal plane tilt =  29.634 degrees
+ RECON resolutions =
+   512.9929       91.16507       97.02886       1177.776
+
+/////////////////////////////////END OF COSY///////////////////
+/////////////For SIMC/////////////////////////////
+1) go /w/halla-scifs17exp/dvcs/disk1/bishnu/SIMC/multifoil_fall16/infiles/runplan.inp (you can find information of run and energy etc)
+2) cd /w/halla-scifs17exp/dvcs/disk1/bishnu/SIMC/multifoil_fall16
+3) ./run_mc.sh
+
+
+// RUN DIS SIMULATION///////////////////////////
+1) cd gowork
+2) cd working
+3) change no of events in dvcs_run.mac
+4) change outputfile in cd src/dvcsHist_Manager.cc
+5) change runNumber (either 362/481 so on ) on readdb.C
+6) cd build 
+7) cmake ..
+8) make
+9) ./dvcs_2010 dvcs_run.mac runnumber
+
+//////////////////////// know job status at Jlab////////
+jobstat -u karki
+
+/////////////run simulation in interactive mode////////
+jsub pleasework.jsub
+/////////////////////////////////////////
+
+// change normal file to executable////
+>> chmod +x skimDisData.sh
+>> to change the highlight color in ls: chmod o-rw *
+
+ //// source ROOT 13
+>> source /home/bishnu/DIS/root13/bin/thisroot.csh
+
+
+//////////////////sed command////Scripting///////////////////
+1) Remove every occurance in everyline like xy=and [] from a file
+
+>> cat Rcutfile.txt | sed 's/to_be_replaced/replace_with/g' > temp.txt
+But for the special character \; (sed 's/\;/\:/g' )
+replace special character  (cat scaler2.txt | sed 's/[:]//' > temp.txt)
+remove anything after "(" >>> cat temp.txt | sed 's/[(].*//' > temp1.txt
+remove anything before "(" >>> cat temp.txt | sed 's/.*[(]//' > temp1.txt
+
+2) Remove first character after first comma 
+>> sed -i -e 's/, ./, /'  temp.txt
+
+3) Add space after first character in every line then add comma
+>> sed -i -e 's/./& /;s/ / , /'  temp.txt
+4) Add character at end of line
+>>  sed -e 's/$/);/' -i temp.txt
+
+////////////////// ifarm commands//////////////////////
+1) top command gives memory used in ifarm 
+2) ps -u // used my see how many used by me
+3) kill PID
+4) kill %
+
+/////////////////
+ssh -X adaq@adaq1
+password 12daq:CODA3
+cd scripts/epicsRunstartL20160110 to get epics variable name
+aonl machine
+aonl_ana is the password
+
+
+Target temperature EPICS: "`$CAGET -t halTC502_3_Sensor_1_R'" 
+                          "`$CAGET -t halTC502_3_Sensor_2_R'"
+                          "`$CAGET -t halTC502_3_Sensor_3_R'"  
+
+
+Pressure inlet:    "`$CAGET -t haH2_P_Fill_Target_R'"
+
+        outlet      "`$CAGET -t haH2_P_Exhaust_R'"
+
+
+
+
+
+
+scp karki@ftp.jlab.org
+put <filename>
+
+///////////////////// GRAPH////////////
+   auto g = new TGraph();
+   g->SetPoint(0, -3.5, 100 );
+   g->SetPoint(1, -3.0, 300 );
+   g->SetPoint(2, -2.0, 1000 );
+   g->SetPoint(3,  1.0, 800 );
+   g->SetPoint(4,  0.0, 200 );
+   g->SetPoint(5,  3.0, 200 );
+   g->SetPoint(6,  3.0, 700 );
+   g->Draw("L");
+   g->SetTitle("This is a TGraph");
+   g->SetLineColor(kRed);
+   g->SetFillColor(0);
+
+
+
+//////////////// globus////////////
+Go to https://app.globus.org/file-manager/gcp
+>> generate setup key
+$ tar xzf globusconnectpersonal-latest.tgz
+$ cd globusconnectpersonal-n.m
+$ ./globusconnect &
+
+
+//////////////////// Covarience ////////
+int QA2()
+{
+Double_t x[] = {1, 2, 3, 4, 5};
+Double_t y[] = {1.1, 1.9, 3.2, 3.9, 5.5};
+TGraph *g = new TGraph(5, x, y);
+g->Draw("ALP");
+TFitResultPtr r = g->Fit("pol1", "S");
+TMatrixD cov = r->GetCorrelationMatrix();
+TMatrixD cor = r->GetCovarianceMatrix();
+cov.Print();
+cor.Print();
+return 0;
+ cout<<(sizeof(x) / sizeof(Double_t))<<endl;
+}
+
+
+/////////////// Random number Generator///////
+ TRandom2 *fRan = new TRandom2(); 
+z_react = fRan->Uniform(Target_Min,Target_Max);
+//////// OR//////////
+TRandom3 *fRan = new TRandom3(); 
+fRan->SetSeed(0);
+fRan->Gaus(1,sigma)  // 
+
+
+///////////COMPARE TWO STRINGS/////////
+1) INCLUDE STRING.H
+>> if(strcmp(TString string1, TString string2)==0)stat
+
+///////// VECTOR READING/////
+ifstream runlist;
+  runlist.open(Form("/home/bishnu/DIS/2017/dis_xsection_%d.dat",kin));
+  vector<double> test;
+ double run;
+  
+while (!runlist.fail() && !runlist.eof())
+  {
+runlist >>run;
+test.push_back(run)
+}
+   for(int i = 0; i < test.size()-1; i++) {
+   {
+cout<<test[i]<<endl;
+    }  
+/////////////// File reading with tag on it
+ ifstream input;
+  input.open(Form("/home/bishnu/DIS/2018/dis_rates_April_2019_%d.dat",kin));
+  string titlelinecharge;
+  std::getline(input,titlelinecharge);
+  cout<<titlelinecharge<<endl;
+for(int i=0;i<4;i++)
+    {
+      input>>run[i];
+}
+
+
+
+
+
+
+///////////// ROOT VERSION 6 INSTALLATON
+1) CHOOSE THE VERSION YOU WANT TO DOWNLOAD
+2) GO TO BUILD-PREQUISITE AND INSTALL REQUIRED VERSION
+https://root.cern.ch/build-prerequisites
+3) sudo apt-get install git dpkg-dev cmake g++ gcc binutils libx11-dev libxpm-dev libxft-dev libxext-dev
+4) UNTAR THE VERSION
+5) MKDIR MYBUILD
+6) GO TO ROOT DIRECTORY AND >>./CONFIGURE
+7) CD MYBUILD THEN 
+8) CMAKE ../ROOT_DIREC
+8) MAKE 
+
+///////////////// TBOX ////////////
+ TBox *B1=new TBox(firstX,firstY,thirdX,thirdY);
+
+////////// JIXODRAW/////////////////
+To open >>>> java -jar jaxodraw-2.1-0.jar
+1>> ps2epsi jaxodraw-2.ps
+2>> ps2pdf -dEPSCrop jaxodraw-2.epsi
+
+
+>>>>>>>Install pandas in ubuntu<<<<<<
+sudo apt-get install python3-pandas
+
+
+
+>>>>>>>>>>> split big file into small
+>> split -b 25M filename.extension
+
+
+>>>>>>>>To combine many files into one
+>> cat x* > newfilename.extension
+
+>> count line or word 
+
+$ wc-l filename Or wc-w filename (Word) 
+
+#########################################
+>>> Colinear pdf no k_T dependences
+
+########VNC#############
+1) crate a port in jlabl4 >> vncserver -geometry 1200x720 :3
+2)  ssh karki@login.jlab.org -L 2222:jlabl4.jlab.org:7 (in one terminal)
+3)  ssh karki@localhost -p 2222 -L 5907:localhost:5907 (in another terminal)
+4) Other terminal >> vinagre >> localhost:3  Put password:BK.....@3
+ ################### REACTIVE VNC  ########
+1) GO TO JLABL4
+2) ls ~/.vnc/*.pid
+3) vncserver -kill :3
+4) vncserver -geometry 1920x1080 :3
+TO KILL THE VNCALL DO
+1) >> ps -ae |karki
+2) kill sh (kill <job id>
+
+###########MINICONDA ###############
+>>1) conda create -n research (i.e envname) python 
+
+>>2) conda acitvate research
+
+>>3) conda deactivate research
+
+>>conda install nameofProgram
+
+///////READING THE FIRST LINE IN C++ TEXT FILE ////////////////
+>> string titlelineGK1;
+  std::getline(experiment,titlelineGK1);
+   cout<<titlelineGK1<<endl;
+
+>>>>>>>>>>	Read FEW LINE OF THE FILE IN TERMINAL  
+$$$ head -n num_of_lines File_Name
+
+
+///////////// 	UPGRADE ANY PACKAGE IN IFARM/////2/////
+pip install --upgrade scipy --user
+
+
+
+
+$$$$$$$$$$$$$$$$$$$$ PYTHON $$$$$$$$$$$$$$$$$
+1) Draw a histogram of type int or float
+pd.column_name.plot(kind='hist')
+
+2) pd.column_name.value_counts().plot(kind='bar')
+
+##########COPY from work of VOLATILE DISK########
+1) scp karki@ftp.jlab.org:/u/work_Directory/filename .
+
+
+############### RUN A PROGRAM WITH BASH SCRIPT  ########
+//////// IF THE NUMBER OF ARGUMENT IS ==1 THEN GO AHEAD OTHERWISE
+if [ $# -ne 1 ] 
+then
+	echo "You need to enter the year."
+	exit 1 
+fi
+
+year=$1
+printf -v cmd 'test.C(%d)' $year   // RUN THE CODE WITH ONE ARGUMENT (INT) 
+  root -l -b -q $cmd
+// IF IT WOULD BE STRING THEN IT WOULD BE ("%d") INSTEAD OF (%d)
+
+
+////////////////// DIVIDE TCANVAS TO TPAD UNEQUALLY 
+
+TCanvas *c1 = new TCanvas("c1","Example 2 pads (20,80)",200,10,800,700);
+  TPad *pad1 = new TPad("pad1", "The pad 80% of the height",0.0,0.5,1.0,1.0);
+  TPad *pad2 = new TPad("pad2", "The pad 20% of the height",0.0,0.0,1.0,0.5);
+c1->cd();
+pad1->Draw();
+c1->cd();
+pad2->Draw();
+
+////////////// BASH CUT COMMAND (GET PARTICULAR LINE OR WORD FROM INPUT)
+>> INPUT IS ../../../data/ped/rich_pedestal_20200816_163948.txt
+
+1) GET 6 WORD FROM BEGINING SEPRATED BY "/"
+filenopath=$(echo $filename| cut -d '/' -f 6)
+OUTPUT IS rich_pedestal_20200816_163948.txt
+
+2) REMOVE .TXT FROM FILENOPATH
+file=$(echo $filenopath| cut -d '.' -f 1)
+OUTPUT >> rich_pedestal_20200816_163948
+
+3) tO GET 20200816
+ day=$(echo $file| cut -d '_' -f 3)
+
+
+
+
+
+///////////// Mounting the system/directory
+sshfs solid@tunl11:/directory_you_want_remote /directory_where_youWant_in_local
+passworkd of solid@
+If previously it is rebooted or shuted not wisely then : fusermount -u YOUR_MNT_DIR.
+
+//////SEPARATING AND GRABBING THE RIGHT STRING IN C++
+std::string s = "Example_45-3";
+int p1 = s.find("_");
+int p2 = s.find("-");
+// std::string number = s.substr(p1 + 1, p2 - p1 - 1);
+ std::string number = s.substr(0,p1 );
+ 
+ cout<<"  Last try  "<<number<<endl;
+
+
+
+/////////////////// Time of program on c++ //////////
+	using namespace std::chrono;
+	auto start = high_resolution_clock::now();
+	// write the program
+	auto stop = high_resolution_clock::now();
+// milliseconds, nanoseconds, seconds
+	  auto duration = duration_cast<milliseconds>(stop - start);
+	  cout << duration.count() << endl;
+
+//////////READ THE FILE WITH VECTOR ////////
+ vector<double> a, b, c;
+   double ai,bi,ci;
+  while(inputfile>>ai>>bi>>ci)
+    {
+      a.push_back(ai);
+      b.push_back(bi);
+      c.push_back(ci);
+    }
+  // for(auto i=a.begin();i!=a.end();i++)
+   for(auto i=0;i<4;i++)
+    {
+      cout<<a.at(i)<<"   "<<b.at(i)<<"   "<<c.at(i)<<endl;
+    }
+ TGraph *g1= new TGraph(4,&a[0],&b[0]);
+  g1->Draw("AP");
+  g1->SetMarkerStyle(22);
+
+
+
+////////////// HALLD ///
+
+ssh -X hdtrdops@gluon49
+GemTrd_21
+HV :  telnet u1-9-top 1527
+Channels : 5-01, 5-02, 5-03, 5-04
+
+///From local machine :: to access tunnel hdtrdops:
+
+From localMachine$ ssh -X -t -L5921:localhost:5921 karki@hallgw.jlab.org ssh -X -t -L5921:localhost:5921 hdtrdops@gluon49
+password:6digitpin+6digit SAFENET
+hdtrdopsPassword:GemTrd_21
+
+Then do ./VNC from local machine
+// To run DAQ from scratch
+>>source trd_online_setup.cshrc
+>> Then run command rcm.sh
+>> Then start
+>> press runGui
+>> PressDAQMon
+
+/// TUNNEL THROUGH hdtrdops@gluon49
+$ssh -X -t -L5921:localhost:5921 karki@hallgw.jlab.org ssh -X -t -L5921:localhost:5921 hdtrdops@gluon49
+Password:fromsafeNet
+Password:GemTrd_21
+
+/// LV Power Cycle//
+snmpget -v 2c -m +WIENER-CRATE-MIB -c public 129.57.26.234 sysMainSwitch.0
+
+// copy data to ifarm ;;
+[hdtrdops@gluon28 ~]$ scp hd_rawdata_001890_000.evio hexc@ifarm:/w/eic-scshelf2104/users/mRICH/JLab2021_test_data/.
+
+ssh hdops@gluon28 =>GlueX_00
+
+To check the status of switch (on/off)
+1) HDOPS gluon28:~> snmpget -v 2c -m +WIENER-CRATE-MIB -c public 129.57.26.234 sysMainSwitch.0
+WIENER-CRATE-MIB::sysMainSwitch.0 = INTEGER: on(1)
+
+// LV status 
+2) snmpget -v 2c -m +WIENER-CRATE-MIB -c public 129.57.26.234 outputMeasurementSenseVoltage.u301
+WIENER-CRATE-MIB::outputMeasurementSenseVoltage.u301 = Opaque: Float: 5.199219 V
+
+//// Switch off the LV
+3)  HDOPS gluon28:~> snmpget -v 2c -m +WIENER-CRATE-MIB -c public 129.57.26.234 sysMainSwitch.0 i 0
+
+// Switch on the LV
+4) HDOPS gluon28:~> snmpget -v 2c -m +WIENER-CRATE-MIB -c public 129.57.26.234 sysMainSwitch.0 i 1
+
+
+////////// GITHUB TIPS
+1) GENERATE THE SSH KEY
+=> TYPE "ssh-keygen" in our local or ifarm machine
+=> hit enter 3 times than you will get you key written somewhere in /home/karki/.ssh/id_rsa.pub
+=> Type cat /home/karki/.ssh/id_rsa.pub
+=> copy the printed ssh-key gen
+=> go to github account => setting SSH key => generate new ssh-key=> then copy and create new sshkey
+
+how to initilize and push into git
+1) Create a repository in you github account
+2) To create the directory do git init (for first time)
+2) git add .
+3) git commit -m "first commit"
+4) git remote add origin git@github.com:bk806714/solid.git
+5) git push -u -f orgin master
+
