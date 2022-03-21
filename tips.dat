@@ -736,8 +736,10 @@ how to initilize and push into git
 5) git push -f orgin master
 
 ###  IF IT ASK HTTPS LIKE THIS THAN DO THIS
-Username for 'https://github.com': bk806714
+Username for 'https://github.com': bk806714 // This setting will make you ENTER PASSWORD AFTER EVERY LOGIN
 >>>>> git remote set-url origin git@github.com:bk806714/Dropbox.git
+
+
 
 
 
