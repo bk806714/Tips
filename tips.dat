@@ -130,7 +130,7 @@ gStyle->SetPalette(1);
 //////////////SET N DIVISIONS
  hgrid->GetXaxis()->SetNdivisions(-404); // First 4 denotes number of ticks in between first and second mark (for instance mark between 0-100 if marking is 0 , 100, 200 ..400 so on
  hgrid->GetYaxis()->SetNdivisions(-406); // 06 second digit denotes how many major ticks between min and max. For instance here if 0- 2400  one get 6 ticks (0 400 800 ... 2400)
-
+HERE 2400 - 0 = 2400/6= 400 is each main division and 
 
  mgtotxsec[ip]->GetXaxis()->SetNdivisions(18,2,0,kTRUE);// MAIN SUBMAIN
 
@@ -732,6 +732,13 @@ how to initilize and push into git
 2) To create the directory do git init (for first time)
 2) git add .
 3) git commit -m "first commit"
-4) git remote add origin git@github.com:bk806714/solid.git
-5) git push -u -f orgin master
+4) git remote add origin git@github.com:bk806714/solid.git (only for the first time)
+5) git push -f orgin master
+
+###  IF IT ASK HTTPS LIKE THIS THAN DO THIS
+Username for 'https://github.com': bk806714
+>>>>> git remote set-url origin git@github.com:bk806714/Dropbox.git
+
+
+
 

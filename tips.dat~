@@ -1,0 +1,221 @@
+////////////////
+Remember 984174///////////
+
+1)  ////////   Linking the file//////////
+ln -s (where is file filename ) what you want to link
+e.g First make a raw directory inside replay directory then
+ln -s /adaq1/data1/gmp_12705.dat.0 dvcs14_12705.dat.0
+
+
+2)        GETTING A FILE FROM MASS TAPE
+
+jcache get /mss/halla/dvcs/raw/dvcs14_run#.dat.*
+
+
+3)       FIND THE RAW FILES
+
+cd /adaq1/data1
+
+4)       CHAFS DIRECTORY
+
+cd /chafs/work1/dvcs
+
+
+5)     REPLAY GMP
+go to onlana :
+type goonalana
+then: .x replay_R.C (run#)
+
+5)   CLONE HISTOGRAM
+ TH1F *h1 = (TH1F*) h2>Clone();
+ 
+================================
+6)  TO FIND THE SIZE OF FILE
+du -sk filename
+================================
+
+7) FOR GOLDEN RUN
+BE SURE NO ANY REPLAYS
+a) godvcs
+b)cd Rootfiles
+c)create symbolic link (ln -s target of link rootfile  name of link golden)
+d) goback to onl and do ls
+e) open i)calo.cfg     ii) detectorL.cfg   iii) physics.cfg
+f) change the line with golden root file by target run#
+
+
+8)  PROJECTION OF HISTOGRAM
+a) TH1F *h1 = new TH1F ("h1","projection",100,0.5)
+h1=(TH1F*) name of 2D hist->ProjectionX.();
+h1->Draw();
+
+9)   TO REMOVE STATISTICS BAR
+h1->SetStats(0)
+
+10)A>> Fit
+ a) Fit("function","R0Q");fits without drawing the fitting
+ b) Fit("function","R+");fits with drawing the fitting
+ c) "Q" is for not having fitting parameters in terminal
+d) Double_t mean_BMinus=g1->GetFunction("gaus")->GetParameter(1);
+
+//B  Fitting between two ranges of x
+TF1 * hfit = new TF1("fit","1.0-(x>550)*[0]*pow(((x/550)-1.0),2) ",100,815);
+    fit->SetParameter(0,0.5);
+   multi->Fit(hfit);
+
+
+11) LEGEND============================================
+
+TLegend *legend=new TLegend(0.6,0.65,0.88,0.85);// from(x1,y1) to (x2,y2)
+legend->SetTextFont(72);
+legend->SetTextSize(0.04);
+legend->AddEntry(hscale,"Scaled","l");
+legend->AddEntry(hnocorr,"without scaling","l");
+// legend->AddEntry(signalFcn,"Signal fit","l");                              
+// legend->AddEntry(fitFcn,"Global Fit","l");                                 
+legend->Draw();
+===================================================
+
+12) shadding the REGION IN GRAPH
+============================================
+TGraph *cutg= new TGraph(4);
+   cutg->SetPoint(0,-147,1.1);
+   cutg->SetPoint(1,165,1.1);
+   cutg->SetPoint(2,165,0.90);
+   cutg->SetPoint(3,-147,0.90);
+   cutg->SetFillStyle(3002);
+   cutg->SetFillColor(15);
+   cutg->Draw("fsame");
+ == =============================================
+
+13) GSTYLE===================================
+gStyle->SetOptStat(0);
+gStyle->SetOptFit(1);
+// gStyle-SetTextSize(0.08);                                                    gStyle->SetPaintTextFormat("5.4g");
+gStyle->SetTitleFontSize(0.06);
+gStyle->SetNdivisions(510);//505 // number of division in X axis 10 or 5
+gStyle->SetPadTopMargin(0.11);
+gStyle->SetPadLeftMargin(0.14);
+gStyle->SetPadRightMargin(0.08);
+gStyle->SetPadBottomMargin(.14);
+gStyle->SetTitleYOffset(0.48); // higher the value goes away from axis
+gStyle->SetTitleXOffset(0.98);
+gStyle->SetTitleYSize(0.063);
+gStyle->SetTitleXSize(0.063);
+gStyle->SetLabelFont(62,"X");
+gStyle->SetLabelFont(62,"Y");
+gStyle->SetTitleFont(62,"X");
+gStyle->SetTitleFont(62,"Y");
+gStyle->SetLabelSize(0.044,"X");
+gStyle->SetLabelSize(0.044,"Y");
+gStyle->SetPaperSize(18,22);
+=======================================================
+14) INTEGRAL
+Int_t maxbin,minbin;
+minbin= h3->FindBin(-0.02);
+maxbin=h3->FindBin(0.005);
+cout<<h3->Integral(minbin,maxbin)<<endl;
+
+=====================================================
+15)LINE BREAK IN LATEX
+\hfill \break
+=====================================================
+16)Fitting 
+//(sizeof(x) / sizeof(Double_t)
+
+Double_t SEMF(Int_t x,Int_t y, Double_t *par)
+{
+  Double_t mod=1.0;
+  if(x%2==0 && y%2==0){
+    mod=1.0;}
+  if else (x%2==!0 && y%2==!0){
+      mod =-1.0;}
+  else mod =0.0;
+  Double_t value =(par[0])-(par[1]*pow(x,-0.333))-(par[2]*y*(y-1)*pow(x,-1.3333))-(par[3]*pow((x/2.0-y),2)*x**2) + par[4]*mod*pow(x,-1.5);
+  return value;			     
+}
+=====================================================
+17)SET LOG Y
+gPad->SetLogy()
+=====================================================
+18)SPLIT LINE IN TITLE ROOT
+TH1D *h1 = new TH1D("h1",
+   "#splitline{Difference between Original}{#splitline{function and Function}{with noise}}",
+   100, -hr, hr);
+=====================================================
+19)READ PARTICULAR COLUMN FROM DATA FILE
+RUN BELOW COMMAND ON TERMINAL WHERE YOU HAVE DATA FILE (BE_7501.dat)
+
+awk 'NR=2,NR=10000{print $3, $7}' BE_7501.dat > BE_A.dat
+
+
+=====================================================
+20) g++ -o main main.cxx calc.cxx `root-config --cflags --glibs`
+
+
+=====================================================
+Run Perl script
+=====================================================
+21) perl submit.pl 
+=====================================================
+22) How to have .sty files in latex
+a) Find and download the files you are missing (CTAN: search.sty in google)
+b) run: latex search.ins file (you will get .sty file)
+c) sudo cp .sty to /usr/share/texlive/texmf-dist/tex/latex
+d) run: sudo texhash
+e) you may delete downloaded file
+
+=================================================================
+22) 9) HOw to remove #file#
+rm \#example.C#
+
+==================================================
+23) Configure SHELL and ALIAS
+a) First echo $SHELL (find which shell you are using)
+b) gedit ~/.tchrc or bash or chrc   (you may have tchrc but inside tchrc source chrc like yours)
+c) Open and write alias bk 'ssh -X karki@login1'
+d) then run comman source  ~/.tchrc (Bemindful tchrc can be chrc as well
+=================================================
+24) LOGIN FILE SOURCE
+A) Open .login
+b) put a command source path/file.sh
+c) then you can expect analyzer or DB whatever you have path for file.sh
+=================================================
+24) ROOT INSTALLATION
+A) Download source file file.xz
+b) untar (tar -xvf file.xz)
+c) ./configure
+d) make
+e) make install
+f) ldconfig
+g) root
+
+
+
+25)  /////////////Name ON AXIS /////////
+A) fOR HISTOGRAMS
+const Int_t nx = 6;
+const char *name[nx] = {"All Signal","Beam_E & Unused_E Cut","M2_Cut","delta_phi_Cut","Missing_E Cut","Omega_Cut"};
+
+for( int i=1;i<=nx;i++){
+ hyieldtrue->GetXaxis()->SetBinLabel(i,name[i-1]);
+ hyieldfalse->GetXaxis()->SetBinLabel(i,name[i-1]);}
+
+B) fOR GRAPH
+
+ Int_t n = 6;
+   Float_t x[]  = {-0.22, 0.029, 0.225, 0.426, 0.67, 1.09};
+   Float_t y[]  = {1,3,5,7,9,11};
+ gr1->Draw("P");
+ TText *t = new TText();
+   t->SetTextAlign(32);
+   t->SetTextSize(0.035);
+   t->SetTextFont(72);
+   char *labels[6] = {"Jan98","Feb98","Mar98","Apr98","May98","Jun98"};
+   for (Int_t i=0;i<6;i++) {
+      t->DrawText(-0.42,y[i],labels[i]);
+
+
+
+
+
